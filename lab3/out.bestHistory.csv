@@ -1,0 +1,3 @@
+"search-number","evaluation","power-plants*","initial-population*","birth-rate*","polluting-rate*","planting-rate*","num-replicates","best-fitness-so-far"
+"1","10","9","30","0.1","3","0.05","10","-807.9"
+"1","30","19","30","0.1","3","0.02","10","305.2"
