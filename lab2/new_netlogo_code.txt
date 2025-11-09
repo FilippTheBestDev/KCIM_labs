@@ -1,0 +1,136 @@
+breed [ people person ]
+breed [ trees tree ]
+globals [ avg-pollution ]
+
+turtles-own [ health ]
+
+patches-own [
+  pollution
+  is-power-plant?
+]
+
+to setup
+  clear-all
+
+  set-default-shape people "person"
+  set-default-shape trees "tree"
+
+  ask patches [
+    set pollution 0
+    set is-power-plant? false
+  ]
+
+  create-power-plants
+
+  ask patches [ pollute ]
+
+  create-people initial-population [
+    set color black
+    setxy random-pxcor random-pycor
+    set health 5
+  ]
+
+  reset-ticks
+end
+
+to go
+
+  if not any? people [ stop ]
+
+  ask people [
+    wander
+    reproduce
+    maybe-plant
+    eat-pollution
+    maybe-die
+  ]
+
+  diffuse pollution 0.8
+
+  ask patches [ pollute ]
+
+  set avg-pollution mean [pollution] of patches
+  
+  ask trees [
+    cleanup
+    maybe-die
+  ]
+
+  tick
+end
+
+to create-power-plants
+  ask n-of power-plants patches [
+    set is-power-plant? true
+  ]
+end
+
+to pollute  ;; patch procedure
+  if is-power-plant? [
+    set pcolor red
+    set pollution polluting-rate
+  ]
+  set pcolor scale-color red (pollution - .1) 5 0
+end
+
+to cleanup  ;; tree procedure
+  set pcolor green + 3
+  set pollution max (list 0 (pollution - 1))
+  ask neighbors [
+    set pollution max (list 0 (pollution - .5))
+  ]
+  set health health - 0.1
+end
+
+to wander
+  if avg-pollution > 3 [
+    rt random-float 80
+    lt random-float 80
+    fd 1.5
+    set health health - 0.2
+  ]
+  if avg-pollution <= 3 [
+    rt random-float 30
+    lt random-float 30
+    fd 1
+    set health health - 0.05
+  ]
+end
+
+to reproduce
+  let local-birth-rate birth-rate
+  if avg-pollution > 4 [ set local-birth-rate local-birth-rate - 0.03 ]
+  if any? patches in-radius 3 with [is-power-plant?] [
+    set local-birth-rate local-birth-rate + 0.05
+  ]
+  if health > 4 and random-float 1 < local-birth-rate [
+    hatch-people 1 [ set health 5 ]
+  ]
+end
+
+to maybe-plant
+  let local-plant-rate planting-rate
+  if any? patches in-radius 3 with [is-power-plant?] [
+    set local-plant-rate local-plant-rate + 0.05
+  ]
+  if random-float 1 < local-plant-rate [
+    hatch-trees 1 [
+      set health 5
+      set color green
+    ]
+  ]
+end
+
+to eat-pollution  ;; person procedure
+  if pollution > 0.5 [
+    set health (health - (pollution / 10))
+  ]
+end
+
+to maybe-die  ;; die if you run out of health
+  if health <= 0 [ die ]
+end
+
+
+; Copyright 2007 Uri Wilensky.
+; See Info tab for full copyright and license.
