@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Tetris Grid Renderer — Complete FSM</title>
+<style>
+  body { font-family: sans-serif; padding: 12px; }
+  #grid {
+    display: inline-grid;
+    grid-template-columns: repeat(10, 24px);
+    grid-auto-rows: 24px;
+    gap: 1px;
+    margin-top: 20px;
+    background: #444;
+    width: max-content;
+  }
+  .cell {
+    width: 24px; height: 24px;
+    background: #111;
+  }
+  pre { font-size: 12px; }
+  #controls { margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<h2>Tetris 20-Bag Play Forever</h2>
+
+<div id="controls">
+  <button id='runOnce'>Execute one step</button>
+  <button onclick="resetAll()">Reset</button>
+  <button id="toggleBot">BOT MODE: OFF</button>
+  <br/><br/>
+  <span>Bot move delay: <span id="sliderValue"></span></span>
+  <input type="range" min="0" max="250" value="150" class="slider" id="myRange">
+</div>
+
+<div id="grid"></div>
+
+<script src="./rendering.js"></script>
+<script src="./phase1FSM.js"></script>
+<script src="./phase2FSM.js"></script>
+<script src="./phase3FSM.js"></script>
+<script src="./phaseController.js"></script>
+<script src="./main.js"></script>
+
+</body>
+</html>
